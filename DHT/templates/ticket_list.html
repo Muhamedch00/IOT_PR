@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des Tickets</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            color: #fff;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .badge-OPEN {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .badge-CLOSED {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .badge-ASSIGNED {
+            background: #f1c40f;
+            color: black;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            margin-right: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+
+        .btn-close {
+            background: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🎫 Gestion des Tickets</h1>
+
+        <div class="cards">
+            <div class="card" style="width: 100%; max-width: 1000px;">
+                <!-- Export Button & User Info -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="color: #aaa;">👤 Connecté en tant que: <strong>{{ request.user.username }}</strong> (<a
+                            href="{% url 'logout' %}" style="color:#e74c3c;">Déconnexion</a>)</div>
+                    <a href="/export-csv/" class="btn glow-btn" style="background: #e67e22;">📥 Exporter CSV (Audit)</a>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Niveau</th>
+                            <th>Statut</th>
+                            <th>Description</th>
+                            <th>Résolu Par</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ticket in tickets %}
+                        <tr>
+                            <td>#{{ ticket.id }}</td>
+                            <td>{{ ticket.created_at|date:"d/m H:i" }}</td>
+                            <td>{{ ticket.level }}</td>
+                            <td><span class="badge badge-{{ ticket.status }}">{{ ticket.status }}</span></td>
+                            <td>{{ ticket.description }}</td>
+                            <td>
+                                {% if ticket.resolved_by %}
+                                <span style="color: #2ecc71;">{{ ticket.resolved_by.username }}</span>
+                                {% else %}
+                                -
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if ticket.status != 'CLOSED' %}
+                                <form action="{% url 'close_ticket' ticket.id %}" method="POST" style="display:inline;">
+                                    {% csrf_token %}
+                                    <button type="submit" class="action-btn btn-close">Clôturer</button>
+                                </form>
+                                {% else %}
+                                <span>-</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">Aucun ticket.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <a href="/" class="btn glow-btn">🏠 Retour Dashboard</a>
+        </div>
+    </div>
+</body>
+
+</html>

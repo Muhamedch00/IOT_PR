@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard IoT Futuriste</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🚀 Dashboard</h1>
+        <div style="text-align: center; color: #aaa; margin-bottom: 20px;">
+            👤 Tu es connecté : <strong>{{ role }}</strong>
+            (<a href="{% url 'logout' %}" style="color:#e74c3c; text-decoration: none;">Déconnexion</a>)
+        </div>
+        <div class="cards">
+            <div class="card temp">
+                <h2>🌡️ Température</h2>
+                <div class="value" id="temp-val">-- °C</div>
+                <div class="time" id="temp-time">En attente...</div>
+                <a href="/graph-temp/" class="btn">Voir graphe</a>
+            </div>
+            <div class="card hum">
+                <h2>💧 Humidité</h2>
+                <div class="value" id="hum-val">-- %</div>
+                <div class="time" id="hum-time">En attente...</div>
+                <a href="/graph-hum/" class="btn">Voir graphe</a>
+            </div>
+            <div class="card manual-entry">
+                <h2>📝 Entrer une mesure</h2>
+                <form id="data-form">
+                    <div class="form-group">
+                        <label for="temp-input">Température (°C)</label>
+                        <input type="number" id="temp-input" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="hum-input">Humidité (%)</label>
+                        <input type="number" id="hum-input" step="0.1" required>
+                    </div>
+                    <button type="submit" class="btn glow-btn">Envoyer 📡</button>
+                </form>
+            </div>
+            <!-- Navigation to dedicated pages -->
+            <div class="card nav-card" style="width: 100%; max-width: 800px; margin-top: 20px; text-align: center;">
+                <h2>🔗 Navigation Rapide</h2>
+                <div style="display: flex; justify-content: center; gap: 20px; margin-top: 15px; flex-wrap: wrap;">
+                    <a href="/history/" class="btn glow-btn">📉 Graphique Historique</a>
+                    <a href="/tickets/" class="btn glow-btn" style="background: #2ecc71;">🎫 Gestion Tickets</a>
+                    <a href="/logs/" class="btn glow-btn" style="background: #34495e;">📜 Voir Journal d'Audit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/dashboard.js?v=3"></script>
+</body>
+
+</html>
