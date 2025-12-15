@@ -142,24 +142,33 @@ label {
 input[type="number"] {
     width: 100%;
     padding: 15px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.05) !important;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    color: var(--neon-green);
+    color: var(--neon-green) !important;
     font-family: 'Orbitron', sans-serif;
     font-size: 1.2em;
     box-sizing: border-box;
     transition: all 0.3s ease;
+    -moz-appearance: textfield;
+    /* Remove spinner on Firefox */
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 input[type="number"]:focus {
     outline: none;
     border-color: var(--neon-blue);
     box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1) !important;
 }
 
 .glow-btn {
+    display: block;
     width: 100%;
     margin-top: 10px;
     background: rgba(0, 242, 255, 0.1);
@@ -174,6 +183,9 @@ input[type="number"]:focus {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     margin: 30px auto;
     border: var(--glass-border);
+    width: 100%;
+    max-width: 900px;
+    height: 500px;
 }
 
 canvas {

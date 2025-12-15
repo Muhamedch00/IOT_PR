@@ -76,4 +76,90 @@ function initCombinedGraph() {
 }
 
 // Call the function when the page loads
-document.addEventListener('DOMContentLoaded', initCombinedGraph);
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('combinedChart')) {
+        initCombinedGraph();
+    }
+});
+
+function initGraph(type) {
+    const canvasId = type === 'temp' ? 'tempChart' : 'humChart';
+    const canvas = document.getElementById(canvasId);
+
+    if (!canvas) return; // Exit if canvas doesn't exist on this page
+
+    const ctx = canvas.getContext('2d');
+
+    fetch('/api/data')
+        .then(response => response.json())
+        .then(data => {
+            const labels = data.labels;
+            const values = type === 'temp' ? data.temps : data.hums;
+            const label = type === 'temp' ? 'Température (°C)' : 'Humidité (%)';
+            // Neon Red for Temp, Neon Blue for Hum to match theme
+            const color = type === 'temp' ? 'rgb(255, 77, 77)' : 'rgb(0, 242, 255)';
+            const bgColor = type === 'temp' ? 'rgba(255, 77, 77, 0.2)' : 'rgba(0, 242, 255, 0.2)';
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: values,
+                        borderColor: color,
+                        backgroundColor: bgColor,
+                        borderWidth: 2,
+                        tension: 0.4, // Smoother curve
+                        fill: true,
+                        pointBackgroundColor: color,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff', // White text for dark mode
+                                font: {
+                                    family: 'Orbitron'
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0a0a0',
+                                font: {
+                                    family: 'Roboto'
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#a0a0a0',
+                                font: {
+                                    family: 'Roboto'
+                                },
+                                maxTicksLimit: 10
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Error loading graph data:', error);
+        });
+}
