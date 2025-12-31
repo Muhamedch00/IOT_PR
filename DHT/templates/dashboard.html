@@ -1,64 +1,107 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="fr">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard IoT Futuriste</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
-        rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+{% block title %}Dashboard IoT Futuriste{% endblock %}
 
-<body>
-    <div class="container">
-        <h1>🚀 Dashboard</h1>
-        <div style="text-align: center; color: #aaa; margin-bottom: 20px;">
-            👤 Tu es connecté : <strong>{{ role }}</strong>
-            (<a href="{% url 'logout' %}" style="color:#e74c3c; text-decoration: none;">Déconnexion</a>)
-        </div>
-        <div class="cards">
-            <div class="card temp">
-                <h2>🌡️ Température</h2>
-                <div class="value" id="temp-val">-- °C</div>
-                <div class="time" id="temp-time">En attente...</div>
-                <a href="/graph-temp/" class="btn">Voir graphe</a>
-            </div>
-            <div class="card hum">
-                <h2>💧 Humidité</h2>
-                <div class="value" id="hum-val">-- %</div>
-                <div class="time" id="hum-time">En attente...</div>
-                <a href="/graph-hum/" class="btn">Voir graphe</a>
-            </div>
-            <div class="card manual-entry">
-                <h2>📝 Entrer une mesure</h2>
-                <form id="data-form">
-                    <div class="form-group">
-                        <label for="temp-input">Température (°C)</label>
-                        <input type="number" id="temp-input" step="0.1" required>
+{% block content %}
+<div class="container">
+    <h1>🚀 Dashboard</h1>
+
+    <div class="cards">
+        <!-- Incident Status Card -->
+        <div class="card wide-card" style="text-align: center; margin-bottom: 20px; border: 2px solid 
+                {% if incident %}
+                    {% if incident.severity == 'SEVERE' %}#8e44ad{% elif incident.severity == 'CRITICAL' %}#c0392b{% else %}#e67e22{% endif %}
+                {% else %}#2ecc71{% endif %};">
+            {% if incident %}
+            <h2
+                style="color: {% if incident.severity == 'SEVERE' %}#8e44ad{% elif incident.severity == 'CRITICAL' %}#c0392b{% else %}#e67e22{% endif %}; animation: pulse 1s infinite;">
+                {% if incident.severity == 'SEVERE' %} INCIDENT SÉVÈRE{% elif incident.severity == 'CRITICAL' %}🔴
+                INCIDENT CRITIQUE{% else %}🟠 INCIDENT (ALERTE){% endif %}
+            </h2>
+            <p style="font-size: 1.2em;">Depuis: {{ incident.created_at|timesince }}</p>
+            <p>Description: {{ incident.description }}</p>
+
+            <!-- Comment Section -->
+            <div
+                style="margin-top: 20px; text-align: left; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px;">
+                <h3>💬 Commentaires d'Urgence</h3>
+                <div style="max-height: 200px; overflow-y: auto; margin-bottom: 10px;">
+                    {% for comment in comments %}
+                    <div
+                        style="margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;">
+                        <strong>{{ comment.user.username }}</strong>
+                        <span class="badge" style="background:#3498db; font-size:0.7em;">
+                            {% for group in comment.user.groups.all %}{{ group.name }}{% endfor %}
+                        </span>
+                        <span style="font-size: 0.8em; color: #aaa;">{{ comment.created_at|date:"H:i:s" }}</span>
+                        <br>
+                        {{ comment.text }}
                     </div>
-                    <div class="form-group">
-                        <label for="hum-input">Humidité (%)</label>
-                        <input type="number" id="hum-input" step="0.1" required>
+                    {% empty %}
+                    <p style="color: #aaa;">Aucun commentaire.</p>
+                    {% endfor %}
+                </div>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" name="comment" class="form-input" placeholder="Ajouter un commentaire..."
+                            required
+                            style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #555; background: #222; color: #fff;">
+                        <button type="submit" class="btn glow-btn" style="padding: 5px 15px;">Envoyer</button>
                     </div>
-                    <button type="submit" class="btn glow-btn">Envoyer 📡</button>
                 </form>
             </div>
-            <!-- Navigation to dedicated pages -->
-            <div class="card nav-card" style="width: 100%; max-width: 800px; margin-top: 20px; text-align: center;">
-                <h2>🔗 Navigation Rapide</h2>
-                <div style="display: flex; justify-content: center; gap: 20px; margin-top: 15px; flex-wrap: wrap;">
-                    <a href="/history/" class="btn glow-btn">📉 Graphique Historique</a>
-                    <a href="/tickets/" class="btn glow-btn" style="background: #2ecc71;">🎫 Gestion Tickets</a>
-                    <a href="/logs/" class="btn glow-btn" style="background: #34495e;">📜 Voir Journal d'Audit</a>
+
+            {% else %}
+            <h2 style="color: #2ecc71;">🟢 Tout va bien</h2>
+            <p>Aucun incident en cours. Système nominal.</p>
+            {% endif %}
+        </div>
+        <div class="card temp">
+            <h2>🌡️ Température</h2>
+            <div class="value" id="temp-val">-- °C</div>
+            <div class="time" id="temp-time">En attente...</div>
+            <a href="/graph-temp/" class="btn">Voir graphe</a>
+        </div>
+        <div class="card hum">
+            <h2>💧 Humidité</h2>
+            <div class="value" id="hum-val">-- %</div>
+            <div class="time" id="hum-time">En attente...</div>
+            <a href="/graph-hum/" class="btn">Voir graphe</a>
+        </div>
+        <div class="card manual-entry wide-card">
+            <h2>📝 Entrer une mesure</h2>
+            <form id="data-form">
+                <div class="form-group">
+                    <label for="temp-input">Température (°C)</label>
+                    <input type="number" id="temp-input" step="0.1" required>
                 </div>
+                <div class="form-group">
+                    <label for="hum-input">Humidité (%)</label>
+                    <input type="number" id="hum-input" step="0.1" required>
+                </div>
+                <button type="submit" class="btn glow-btn">Envoyer 📡</button>
+            </form>
+        </div>
+        <!-- Navigation to dedicated pages -->
+        <div class="card nav-card wide-card">
+            <h2>🔗 Navigation Rapide</h2>
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 15px; flex-wrap: wrap;">
+
+                <a href="/tickets/" class="btn glow-btn" style="background: #2ecc71;">🎫 Gestion Tickets</a>
+
+                {% if request.user.is_superuser %}
+                <a href="/admin-users/" class="btn glow-btn" style="background: #e74c3c;">🛡️ Administration</a>
+                {% endif %}
+
             </div>
         </div>
     </div>
-    <script src="{% static 'js/dashboard.js' %}"></script>
-</body>
+</div>
+{% endblock %}
 
-</html>
+{% block extra_scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}

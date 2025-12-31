@@ -65,6 +65,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'DHT.context_processors.get_user_role',
             ],
         },
     },
@@ -133,22 +134,23 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'mohamed.batman007@gmail.com'
-EMAIL_HOST_PASSWORD = 'zlls smsd sscw spab'  # REPLACE WITH YOUR APP PASSWORD
-EMAIL_RECIPIENT = 'mohamed.batman007@gmail.com'
+EMAIL_HOST_USER = 'chourakmohamed770@gmail.com'
+EMAIL_HOST_PASSWORD = 'hvgl bpsj gzxj rpaz' 
+EMAIL_RECIPIENT = 'chourakmohamed770@gmail.com'
 
 # Telegram Configuration
 TELEGRAM_BOT_TOKEN = '8118310302:AAHyeeLk637nPhJty9VUEzhcAaoTLCa79AA'
-TELEGRAM_CHAT_ID = 'https://api.telegram.org/bot<8118310302:AAHyeeLk637nPhJty9VUEzhcAaoTLCa79AA>/getUpdates'
+TELEGRAM_CHAT_ID = '1581416505'
 
+# Contact Lists for Escalation
+OPERATOR_CONTACT = {'email': 'mohamed.batman007@gmail.com', 'phone': '212677452365', 'telegram_chat_id': TELEGRAM_CHAT_ID}
+CHIEF_CONTACT = {'email': 'amraniayoub779@gmail.com', 'phone': '212655896532', 'telegram_chat_id': TELEGRAM_CHAT_ID}
+MANAGER_CONTACT = {'email': 'razer.chou007@gmail.com', 'phone': '212611985620', 'telegram_chat_id': TELEGRAM_CHAT_ID}
 # WhatsApp Configuration
 WHATSAPP_TOKEN = 'your_whatsapp_token_here'
 WHATSAPP_PHONE_ID = 'your_phone_id_here'
 
-# Contact Lists for Escalation
-OPERATOR_CONTACT = {'email': 'mohamed.batman007@gmail.com', 'phone': '212600000001'}
-CHIEF_CONTACT = {'email': 'mohamed.batman007@gmail.com', 'phone': '212600000002'}
-MANAGER_CONTACT = {'email': 'mohamed.batman007@gmail.com', 'phone': '212600000003'}
+
 
 
 # Auth Settings

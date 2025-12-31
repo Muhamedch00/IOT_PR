@@ -27,10 +27,18 @@ urlpatterns = [
     
     # New Pages
     path('history/', views.historical_graph_view, name='history'),
+    path('measurements/', views.measures_list_view, name='measurements'),
     path('logs/', views.audit_log_view, name='logs'),
     
+    # Admin
+    path('admin-users/', views.admin_users_view, name='admin_users'),
+    path('admin-users/create/', views.admin_create_user, name='admin_create'),
+    path('admin-users/delete/<int:user_id>/', views.admin_delete_user, name='admin_delete'),
+    path('admin-users/settings/', views.admin_update_settings, name='admin_settings'),
+
     # Ticketing & Export
     path('tickets/', views.ticket_list_view, name='tickets'),
     path('tickets/close/<int:ticket_id>/', views.close_ticket, name='close_ticket'),
     path('export-csv/', views.export_csv, name='export_csv'),
+    path('export-measures-csv/', views.export_measures_csv, name='export_measures_csv'),
 ]

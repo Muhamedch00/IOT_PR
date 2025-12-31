@@ -82,15 +82,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function initGraph(type) {
+// Store chart instances to destroy them before re-rendering
+const charts = {};
+
+function initGraph(type, queryParams = '') {
     const canvasId = type === 'temp' ? 'tempChart' : 'humChart';
     const canvas = document.getElementById(canvasId);
 
     if (!canvas) return; // Exit if canvas doesn't exist on this page
 
+    // Destroy existing chart if it exists
+    if (charts[type]) {
+        charts[type].destroy();
+        charts[type] = null;
+    }
+
     const ctx = canvas.getContext('2d');
 
-    fetch('/api/data')
+    fetch(`/api/data${queryParams}`)
         .then(response => response.json())
         .then(data => {
             const labels = data.labels;
@@ -100,7 +109,8 @@ function initGraph(type) {
             const color = type === 'temp' ? 'rgb(255, 77, 77)' : 'rgb(0, 242, 255)';
             const bgColor = type === 'temp' ? 'rgba(255, 77, 77, 0.2)' : 'rgba(0, 242, 255, 0.2)';
 
-            new Chart(ctx, {
+            // Store the new chart instance
+            charts[type] = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
@@ -162,4 +172,17 @@ function initGraph(type) {
         .catch(error => {
             console.error('Error loading graph data:', error);
         });
+}
+
+function applyDateFilter(type) {
+    const dateInput = document.getElementById('dateFilter');
+    if (dateInput && dateInput.value) {
+        initGraph(type, `?date=${dateInput.value}`);
+    } else {
+        alert('Veuillez sélectionner une date.');
+    }
+}
+
+function applyRangeFilter(type, range) {
+    initGraph(type, `?range=${range}`);
 }

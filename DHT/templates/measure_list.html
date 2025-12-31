@@ -1,0 +1,55 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des Mesures</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <h1>📊 Historique Complet des Mesures</h1>
+
+        <div class="card wide-card">
+            <div style="max-height: 600px; overflow-y: auto;">
+                <table style="width: 100%; border-collapse: collapse; color: #fff;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--neon-blue);">
+                            <th style="padding: 15px; text-align: left;">Date & Heure</th>
+                            <th style="padding: 15px; text-align: left;">Température (°C)</th>
+                            <th style="padding: 15px; text-align: left;">Humidité (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in measures %}
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: 15px;">{{ item.dt|date:"d/m/Y H:i:s" }}</td>
+                            <td style="padding: 15px; color: #ff4d4d; font-weight: bold;">{{ item.temp }} °C</td>
+                            <td style="padding: 15px; color: #00f2ff; font-weight: bold;">{{ item.hum }} %</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" style="padding: 20px; text-align: center;">Aucune mesure enregistrée.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="/" class="btn glow-btn" style="display: inline-block; margin-right: 15px;">🔙 Retour au
+                Dashboard</a>
+            <a href="{% url 'export_measures_csv' %}" class="btn glow-btn"
+                style="background: #e67e22; display: inline-block;">📥 Télécharger CSV</a>
+        </div>
+    </div>
+</body>
+
+</html>

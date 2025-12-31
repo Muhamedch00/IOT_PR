@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graphique Humidité</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=4">
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap"
         rel="stylesheet">
@@ -14,14 +14,28 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container container-wide">
         <h1>💧 Historique Humidité</h1>
-        <div class="graph-container">
-            <canvas id="humChart"></canvas>
+        <div class="page-layout">
+            <div class="graph-container">
+                <canvas id="humChart"></canvas>
+            </div>
+            <div class="filter-controls">
+                <label for="dateFilter">Date: </label>
+                <input type="date" id="dateFilter">
+                <button onclick="applyDateFilter('hum')" class="btn glow-btn">Filtrer</button>
+                <button onclick="applyRangeFilter('hum', 'month')" class="btn glow-btn"
+                    style="background: #e67e22;">Dernier mois</button>
+                <button onclick="applyRangeFilter('hum', '90days')" class="btn glow-btn"
+                    style="background: #9b59b6;">Derniers 90 jours</button>
+                <a href="/measurements/" class="btn glow-btn" style="margin-top: 20px; background: #34495e;">📜 Voir
+                    toutes les mesures</a>
+                <a href="/" class="btn glow-btn" style="margin-top: 10px; border: 1px solid #aaa; color: #aaa;">🔙
+                    Dashboard</a>
+            </div>
         </div>
-        <a href="/" class="btn">🔙 Retour au Dashboard</a>
     </div>
-    <script src="{% static 'js/graphs.js' %}?v=2"></script>
+    <script src="{% static 'js/graphs.js' %}?v=3"></script>
     <script>
         initGraph('hum');
     </script>

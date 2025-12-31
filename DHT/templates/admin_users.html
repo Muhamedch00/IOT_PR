@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Administration Utilisateurs{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--neon-blue);
+        color: white;
+        border-radius: 5px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        color: #fff;
+    }
+
+    th,
+    td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    th {
+        background-color: rgba(0, 242, 255, 0.1);
+        color: var(--neon-blue);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>🛡️ Administration</h1>
+
+    <!-- Create User Form -->
+    <div class="card wide-card">
+        <h2>➕ Créer un Utilisateur</h2>
+        <form action="{% url 'admin_create' %}" method="POST">
+            {% csrf_token %}
+            <input type="text" name="username" class="form-input" placeholder="Nom d'utilisateur" required>
+            <input type="email" name="email" class="form-input" placeholder="Email (Optionnel)">
+            <input type="password" name="password" class="form-input" placeholder="Mot de passe" required>
+            <select name="role" class="form-input" style="background: #24243e;">
+                <option value="Operator">Opérateur</option>
+                <option value="Chief">Chef</option>
+                <option value="Manager">Manager</option>
+            </select>
+            <button type="submit" class="btn glow-btn" style="background: #2ecc71;">Créer</button>
+        </form>
+    </div>
+
+    <!-- Settings Form -->
+    <div class="card wide-card" style="border: 2px solid #f1c40f;">
+        <h2>⚙️ Paramètres Système</h2>
+        <form action="{% url 'admin_settings' %}" method="POST"
+            style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+            {% csrf_token %}
+            <div style="flex: 1;">
+                <label>Température Min (°C)</label>
+                <input type="number" step="0.1" name="temp_min" class="form-input" value="{{ settings.temp_min }}"
+                    required>
+            </div>
+            <div style="flex: 1;">
+                <label>Température Max (°C)</label>
+                <input type="number" step="0.1" name="temp_max" class="form-input" value="{{ settings.temp_max }}"
+                    required>
+            </div>
+            <button type="submit" class="btn glow-btn"
+                style="background: #f1c40f; color: #000; font-weight: bold; margin-top: 10px;">Sauvegarder</button>
+        </form>
+    </div>
+
+    <!-- User List -->
+    <div class="card wide-card">
+        <h2>👥 Liste des Utilisateurs</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Utilisateur</th>
+                    <th>Email</th>
+                    <th>Rôle</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ u.id }}</td>
+                    <td>{{ u.username }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>
+                        {% for group in u.groups.all %}
+                        {{ group.name }}
+                        {% empty %}
+                        -
+                        {% endfor %}
+                        {% if u.is_superuser %} <span style="color:red;">(Admin)</span> {% endif %}
+                    </td>
+                    <td>
+                        {% if not u.is_superuser %}
+                        <form action="{% url 'admin_delete' u.id %}" method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn"
+                                style="padding: 5px 10px; font-size: 0.8em; border-color: #e74c3c; color: #e74c3c;">Supprimer</button>
+                        </form>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <a href="/" class="btn glow-btn">🏠 Retour Dashboard</a>
+    </div>
+</div>
+{% endblock %}

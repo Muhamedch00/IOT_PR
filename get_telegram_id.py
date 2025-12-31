@@ -29,7 +29,11 @@ def get_chat_id():
         print("\n✅ FOUND CHAT ID!")
         print(f"User: {username}")
         print(f"Chat ID: {chat_id}")
-        print("\n👉 Copy this number and paste it into settings.py as TELEGRAM_CHAT_ID")
+        
+        with open("telegram_conf.txt", "w", encoding="utf-8") as f:
+            f.write(str(chat_id))
+            
+        print("\n👉 Chat ID saved to telegram_conf.txt")
         
     except Exception as e:
         print(f"❌ Connection Error: {e}")
